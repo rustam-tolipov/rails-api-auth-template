@@ -1,0 +1,2 @@
+# rails-api-auth-template
+
