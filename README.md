@@ -1,3 +1,8 @@
+![Ruby](https://img.shields.io/badge/ruby-3.3.1-red)
+![Rails](https://img.shields.io/badge/rails-7.2.2.1-red)
+![RSpec](https://img.shields.io/badge/tested%20with-rspec-blue)
+![Swagger](https://img.shields.io/badge/docs-swagger-yellow)
+
 # rails-api-auth-template
 
 > fast start rails api auth setup with devise + jwt
