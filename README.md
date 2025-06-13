@@ -7,6 +7,8 @@
 this is a rails 7.2 api-only template with jwt authentication using devise.
 you can skip the boring setup and jump straight into building cool stuff.
 
+![screenshot](https://github.com/user-attachments/assets/278b23fd-46d0-4085-9170-45a8da140e6f)
+
 ## 🧠 why tho?
 
 because every time you start a new project, you forget one step.
