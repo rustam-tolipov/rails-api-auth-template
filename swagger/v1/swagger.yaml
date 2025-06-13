@@ -9,6 +9,7 @@ paths:
       summary: logs in a user
       tags:
       - Auth
+      security: []
       parameters: []
       responses:
         '200':
@@ -30,6 +31,57 @@ paths:
                 password:
                   type: string
                   example: '123456'
+  "/api/v1/profile":
+    get:
+      summary: get current user info using jwt token
+      tags:
+      - Profile
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: profile fetched
+        '401':
+          description: unauthorized access
+  "/api/v1/signup":
+    post:
+      summary: registers a new user and returns a jwt
+      tags:
+      - Auth
+      security: []
+      parameters: []
+      responses:
+        '201':
+          description: user created and token returned
+        '422':
+          description: validation failed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              - password
+              - password_confirmation
+              properties:
+                email:
+                  type: string
+                  example: newbob@example.com
+                password:
+                  type: string
+                  example: '123456'
+                password_confirmation:
+                  type: string
+                  example: '123456'
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- bearer_auth: []
 servers:
 - url: "{defaultHost}"
   variables:

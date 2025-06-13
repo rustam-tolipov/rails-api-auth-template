@@ -6,6 +6,7 @@ RSpec.describe "api/v1/auth", type: :request do
       tags "Auth"
       consumes "application/json"
       produces "application/json"
+      security []
       parameter name: :credentials, in: :body, schema: {
         type: :object,
         required: %w[email password],

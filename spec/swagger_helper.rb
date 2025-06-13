@@ -22,6 +22,16 @@ RSpec.configure do |config|
         version: 'v1'
       },
       paths: {},
+      components: {
+        securitySchemes: {
+          bearer_auth: {
+            type: :http,
+            scheme: :bearer,
+            bearerFormat: :JWT
+          }
+        }
+      },
+      security: [ { bearer_auth: [] } ],
       servers: [
         {
           url: '{defaultHost}',
