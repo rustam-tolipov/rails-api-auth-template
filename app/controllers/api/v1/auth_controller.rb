@@ -1,7 +1,7 @@
 module Api
   module V1
     class AuthController < ApplicationController
-      # post /signup → signup user and return jwt
+      # post /signup -> signup user and return jwt
       # I used strong params so no sql injection here (rails got your back)
       def signup
         user = User.new(user_params)
@@ -13,7 +13,7 @@ module Api
         end
       end
 
-      # post /login → login with email & password (keep it simple)
+      # post /login -> login with email & password (keep it simple)
       # if it matches, it give you a token. if not, try again buddy
       def login
         user = User.find_by(email: params[:email])
@@ -23,6 +23,12 @@ module Api
         else
           render json: { error: "Invalid email or password" }, status: :unauthorized
         end
+      end
+
+      # post /logout -> this doesn't actually "destroy" the token — it just tells the client to drop it
+      # jwt is stateless, so the real logout happens on the frontend
+      def logout
+        render json: { message: "token revoked on client side, in short, logout successful" }, status: :ok
       end
 
       private
