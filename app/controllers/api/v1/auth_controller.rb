@@ -8,7 +8,7 @@ module Api
         user = User.new(user_params)
         if user.save
           token = JsonWebToken.encode(user_id: user.id)
-          render json: { token:, user: user.as_json(only %i[id email]) }, status: :created
+          render json: { token:, user: user.as_json(only: %i[id email]) }, status: :created
         else
           render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
         end
