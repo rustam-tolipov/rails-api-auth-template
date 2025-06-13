@@ -14,16 +14,17 @@ class JsonWebToken
   # exp = token expiration (default: 24 hours from now) => pick the time based on your need
   def self.encode(payload, exp = 24.hours.from_now)
     payload[:exp] = exp.to_i
-    jwt.encode(payload, SECRET_KEY, "HS256")
+    JWT.encode(payload, SECRET_KEY, "HS256")
   end
 
   # decode jwt back into original payload
   # returns the payload if token is valid, else it throws error
   def self.decode(token)
-    decoded = jwt.decode(token, SECRET_KEY, true, algorithm: "HS256")
-    hashwithindifferentaccess.new(decoded[0])
-  rescue jwt::decodeerror => e
+    decoded = JWT.decode(token, SECRET_KEY, true, algorithm: "HS256")
+    HashWithIndifferentAccess.new(decoded[0])
+  rescue JWT::DecodeError => e
     # if decoding fails, basic error raises so you can add yours as well
-    raise standarderror.new("invalid token: #{e.message}")
+    raise StandardError.new("Invalid token: #{e.message}")
   end
 end
+
