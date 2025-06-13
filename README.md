@@ -31,7 +31,20 @@ this template saves you from:
 * dotenv (for managing secrets)
 * rack-cors (so your frontend doesn’t scream)
 
-## ⚙️ setup
+## 🧪 how to use this as a template
+
+1. click the green **“Use this template”** button on the top-right
+2. name your new repo (e.g. `my-next-api`)
+3. clone it
+4. run the setup:
+
+```bash
+bundle install
+cp .env.example .env
+rails db:create db:migrate
+```
+
+## ⚙️ or setup as a starter project
 
 ```bash
 git clone https://github.com/yourname/rails-api-auth-template.git
