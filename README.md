@@ -35,6 +35,7 @@ this template saves you from:
 * rspec + rswag (for testing + swagger docs)
 * dotenv (for managing secrets)
 * rack-cors (so your frontend doesn’t scream)
+* rack-attack (rate limiting — no room for brute force bots)
 
 ## 🧪 how to use this as a template
 
