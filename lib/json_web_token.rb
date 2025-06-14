@@ -27,4 +27,3 @@ class JsonWebToken
     raise StandardError.new("Invalid token: #{e.message}")
   end
 end
-
