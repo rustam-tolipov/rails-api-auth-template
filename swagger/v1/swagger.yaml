@@ -54,7 +54,7 @@ paths:
         '201':
           description: user created and token returned
         '422':
-          description: validation failed
+          description: validation failed invalid email + password
       requestBody:
         content:
           application/json:

@@ -12,18 +12,9 @@ RSpec.describe "api/v1/signup", type: :request do
         type: :object,
         required: %w[email password password_confirmation],
         properties: {
-          email: {
-            type: :string,
-            example: "newbob@example.com"
-          },
-          password: {
-            type: :string,
-            example: "123456"
-          },
-          password_confirmation: {
-            type: :string,
-            example: "123456"
-          }
+          email: { type: :string, example: "newbob@example.com" },
+          password: { type: :string, example: "123456" },
+          password_confirmation: { type: :string, example: "123456" }
         }
       }
 
@@ -38,7 +29,7 @@ RSpec.describe "api/v1/signup", type: :request do
         run_test!
       end
 
-      response "422", "validation failed" do
+      response "422", "validation failed invalid email + password" do
         let(:user) do
           {
             email: "",
@@ -46,7 +37,14 @@ RSpec.describe "api/v1/signup", type: :request do
             password_confirmation: "000000"
           }
         end
-        run_test!
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data["errors"]).to include(
+            "Email can't be blank",
+            "Password confirmation doesn't match Password"
+          )
+        end
       end
     end
   end
