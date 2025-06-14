@@ -52,3 +52,5 @@ gem "dotenv-rails", groups: [ :development, :test ]
 gem "rspec-rails", "~> 8.0"
 
 gem "rswag", "~> 2.16"
+
+gem "rack-attack", "~> 6.7"

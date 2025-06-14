@@ -128,9 +128,11 @@ open issues or pull requests.
 
 ## 🧼 todo
 
-* add blacklisted token support (aka real logout)
-* add refresh tokens
-* add role-based auth maybe?
+* add rack-attack (this one is added) ✅
+* add blacklisted token support (aka real logout) 🫷
+* add refresh tokens 🫷
+* add role-based auth maybe? 🫷
+* add cancancan (authorization) 🫷
 
 ## 📢 shoutout
 
