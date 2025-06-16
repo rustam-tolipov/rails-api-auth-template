@@ -14,4 +14,6 @@ Rails.application.routes.draw do
         }
     end
   end
+
+  post '/api/v1/refresh', to: 'api/v1/refresh_tokens#create'
 end
