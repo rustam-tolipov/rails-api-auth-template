@@ -74,7 +74,7 @@ POST /api/v1/signup
 }
 ```
 
-returns a jwt + user json
+returns access token + refresh token + user json
 
 ### login
 
@@ -86,13 +86,24 @@ POST /api/v1/login
 }
 ```
 
-returns a jwt + user json
+returns access token + refresh token + user json
+
+### refresh
+
+```bash
+POST /api/v1/refresh
+{
+  "refresh_token": "<your_refresh_token>"
+}
+```
+
+returns a new access token (keeps you logged in without re-entering credentials)
 
 ### profile (protected)
 
 ```bash
 GET /api/v1/profile
-Authorization: Bearer <your_token>
+Authorization: Bearer <your_access_token>
 ```
 
 returns current user
@@ -101,9 +112,45 @@ returns current user
 
 ```bash
 POST /api/v1/logout
+Authorization: Bearer <your_access_token>
 ```
 
-just a client-side logout trigger. token = gone.
+blacklists the current token (real logout, token becomes invalid)
+
+## 👥 role-based authorization
+
+users have roles: `user` (default), `moderator`, or `admin`
+
+### example: admin-only endpoint
+
+```bash
+GET /api/v1/admin/dashboard
+Authorization: Bearer <admin_access_token>
+```
+
+returns admin dashboard data (403 forbidden for non-admins)
+
+### using roles in your controllers
+
+```ruby
+class MyController < ApplicationController
+  include AuthorizeRequest
+  include AuthorizeRole
+
+  before_action :require_admin  # only admins
+  # or
+  before_action :require_moderator  # admins + moderators
+end
+```
+
+## 🔒 security features
+
+* **no secret fallbacks**: JWT_SECRET_KEY must be set (crashes if missing)
+* **token blacklisting**: logout actually invalidates tokens
+* **refresh tokens**: short-lived access tokens (1 hour) + long-lived refresh tokens (7 days)
+* **rate limiting**: login, signup, and refresh endpoints are throttled
+* **JTI tracking**: every token has a unique identifier for precise control
+* **automatic cleanup**: expired tokens can be cleaned via scheduled jobs
 
 ## 📖 swagger ui
 
@@ -122,18 +169,61 @@ open [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 rspec
 ```
 
+## 🚀 production considerations
+
+### cleanup jobs
+
+add these to your scheduled jobs (sidekiq, cron, etc):
+
+```ruby
+# clean up expired blacklisted tokens
+BlacklistedToken.cleanup_expired
+
+# clean up old refresh tokens
+RefreshToken.cleanup_old_tokens
+```
+
+### environment variables
+
+make sure to set these in production:
+
+```bash
+JWT_SECRET_KEY=your_super_secret_key_here_use_rails_secret
+DATABASE_URL=your_database_url
+REDIS_URL=your_redis_url (optional, for rack-attack)
+```
+
+### database indexes
+
+migrations include proper indexes for performance:
+* `blacklisted_tokens.jti` (unique)
+* `blacklisted_tokens.exp`
+* `refresh_tokens.token` (unique)
+* `refresh_tokens.user_id + revoked`
+* `users.role`
+
 ## 🤝 contribute
 
 open to contributions, improvements, or just saying hi.
 open issues or pull requests.
 
+## ✨ features
+
+* ✅ JWT authentication with secure token generation (includes JTI for tracking)
+* ✅ Token blacklisting for real logout (tokens are invalidated on logout)
+* ✅ Refresh tokens (7-day expiry, keeps users logged in securely)
+* ✅ Role-based authorization (user, moderator, admin roles)
+* ✅ Rate limiting with Rack::Attack (prevents brute force attacks)
+* ✅ Comprehensive test coverage with RSpec
+* ✅ Swagger API documentation via rswag
+* ✅ Security best practices (no fallback secrets, proper validation)
+
 ## 🧼 todo
 
-* add rack-attack (this one is added) ✅
-* add blacklisted token support (aka real logout) 🫷
-* add refresh tokens 🫷
-* add role-based auth maybe? 🫷
-* add cancancan (authorization) 🫷
+* add email confirmation for signup 📧
+* add password reset functionality 🔑
+* add remember me token (long-lived sessions) 💾
+* add oauth providers (google, github, etc) 🔗
 
 ## 📢 shoutout
 
@@ -142,8 +232,15 @@ feel free to fork, star, share, or improve.
 
 ## ⚠️ disclaimer
 
-this is not prod-ready out of the box. it's a starter kit.
-use with brain.
+this template includes production-grade features like token blacklisting, refresh tokens, and role-based auth.
+however, you should still:
+* review security settings for your specific use case
+* set up proper monitoring and logging
+* configure ssl/tls in production
+* add email confirmation if needed
+* implement proper error tracking
+
+use responsibly and test thoroughly before deploying.
 
 ---
 

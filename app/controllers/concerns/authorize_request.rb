@@ -18,6 +18,13 @@ module AuthorizeRequest
 
     begin
       decoded = JsonWebToken.decode(token)
+
+      # check if token is blacklisted (logged out)
+      if BlacklistedToken.blacklisted?(decoded[:jti])
+        render json: { error: "Token has been revoked" }, status: :unauthorized
+        return
+      end
+
       @current_user = User.find(decoded[:user_id])
     rescue ActiveRecord::RecordNotFound, StandardError => e
       render json: { error: "unauthorized: #{e.message}" }, status: :unauthorized

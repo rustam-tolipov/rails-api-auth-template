@@ -10,9 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_06_13_174349) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_28_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "blacklisted_tokens", force: :cascade do |t|
+    t.string "jti", null: false
+    t.bigint "user_id", null: false
+    t.datetime "exp", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exp"], name: "index_blacklisted_tokens_on_exp"
+    t.index ["jti"], name: "index_blacklisted_tokens_on_jti", unique: true
+    t.index ["user_id"], name: "index_blacklisted_tokens_on_user_id"
+  end
+
+  create_table "refresh_tokens", force: :cascade do |t|
+    t.string "token", null: false
+    t.bigint "user_id", null: false
+    t.datetime "expires_at", null: false
+    t.boolean "revoked", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_refresh_tokens_on_token", unique: true
+    t.index ["user_id", "revoked"], name: "index_refresh_tokens_on_user_id_and_revoked"
+    t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -22,7 +45,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_13_174349) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role", default: 0, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role"], name: "index_users_on_role"
   end
+
+  add_foreign_key "blacklisted_tokens", "users"
+  add_foreign_key "refresh_tokens", "users"
 end

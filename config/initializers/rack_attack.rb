@@ -7,7 +7,7 @@ class Rack::Attack
   end
 
   # this is for limiting login attempts to 5 reqs every 20 secs per ip
-  # and of course it's for preventing bture force ;)
+  # and of course it's for preventing brute force ;)
   throttle("logins/ip", limit: 5, period: 20.seconds) do |req|
     req.ip if req.path == "/api/v1/login" && req.post?
   end
@@ -15,6 +15,11 @@ class Rack::Attack
   # same thing for signup as well
   throttle("signups/ip", limit: 5, period: 60.seconds) do |req|
     req.ip if req.path == "/api/v1/signup" && req.post?
+  end
+
+  # limit refresh token attempts to prevent abuse
+  throttle("refresh/ip", limit: 10, period: 60.seconds) do |req|
+    req.ip if req.path == "/api/v1/refresh" && req.post?
   end
 
   # why not tell them politely if they try too much

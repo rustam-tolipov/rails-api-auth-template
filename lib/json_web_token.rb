@@ -7,13 +7,16 @@ require "jwt"
 class JsonWebToken
   # secret key used to sign the token
   # make sure to keep this secret in .env (never hardcode and check before pushing to github)
-  SECRET_KEY = ENV.fetch("JWT_SECRET_KEY") { "fallback_secret" }
+  # will crash if JWT_SECRET_KEY is not set - this is intentional for security
+  SECRET_KEY = ENV.fetch("JWT_SECRET_KEY")
 
   # encode payload into a jwt
   # payload is usually like: { user_id: 1 }
-  # exp = token expiration (default: 24 hours from now) => pick the time based on your need
-  def self.encode(payload, exp = 24.hours.from_now)
+  # exp = token expiration (default: 1 hour from now for better security)
+  # jti = unique token identifier for blacklisting
+  def self.encode(payload, exp = 1.hour.from_now)
     payload[:exp] = exp.to_i
+    payload[:jti] ||= SecureRandom.uuid
     JWT.encode(payload, SECRET_KEY, "HS256")
   end
 

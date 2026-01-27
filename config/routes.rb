@@ -13,9 +13,13 @@ Rails.application.routes.draw do
       post "signup", to: "auth#signup"
       post "login", to: "auth#login"
       post "logout", to: "auth#logout"
+      post "refresh", to: "auth#refresh"
 
       get "protected", to: "protected#index"
       get "profile", to: "profile#show"
+
+      # admin routes
+      get "admin/dashboard", to: "admin#dashboard"
     end
   end
 end

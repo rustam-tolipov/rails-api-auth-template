@@ -4,6 +4,20 @@ info:
   title: API V1
   version: v1
 paths:
+  "/api/v1/admin/dashboard":
+    get:
+      summary: admin dashboard (admin only)
+      tags:
+      - Admin
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: admin dashboard accessed
+        '403':
+          description: forbidden for non-admin users
+        '401':
+          description: unauthorized without token
   "/api/v1/login":
     post:
       summary: logs in a user
@@ -31,6 +45,18 @@ paths:
                 password:
                   type: string
                   example: '123456'
+  "/api/v1/logout":
+    post:
+      summary: logs out user and blacklists token
+      tags:
+      - Auth
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: successfully logged out
+        '401':
+          description: unauthorized without token
   "/api/v1/profile":
     get:
       summary: get current user info using jwt token
@@ -43,6 +69,29 @@ paths:
           description: profile fetched
         '401':
           description: unauthorized access
+  "/api/v1/refresh":
+    post:
+      summary: refreshes access token using refresh token
+      tags:
+      - Auth
+      security: []
+      parameters: []
+      responses:
+        '200':
+          description: new access token issued
+        '401':
+          description: revoked refresh token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  example: your_refresh_token_here
   "/api/v1/signup":
     post:
       summary: registers a new user and returns a jwt
